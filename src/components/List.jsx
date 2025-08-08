@@ -1,9 +1,10 @@
-import { useState } from "react";
-import "./List.css";
+import { useState, useContext, useMemo } from "react";
 import ToDoItem from "./ToDoItem";
-import { useMemo } from "react";
+import { TodoStateContext } from "../App";
+import "./List.css";
 
-const List = ({ todos, onUpdate, onDelete }) => {
+const List = () => {
+  const todos = useContext(TodoStateContext);
   const [search, setSearch] = useState("");
 
   const handleChangeSearch = (e) => {
@@ -52,12 +53,7 @@ const List = ({ todos, onUpdate, onDelete }) => {
 
       <div className="todos_wrapper">
         {filteredTodos.map((todo) => (
-          <ToDoItem
-            todo={todo}
-            key={todo.id}
-            onUpdate={onUpdate}
-            onDelete={onDelete}
-          />
+          <ToDoItem todo={todo} key={todo.id} />
         ))}
       </div>
     </div>

@@ -1,13 +1,16 @@
-import { memo } from "react";
+import { memo, useContext } from "react";
+import { TodoDispatchContext } from "../App";
 import "./ToDoItem.css";
 
-const ToDoItem = ({ todo, onUpdate, onDelete }) => {
+const ToDoItem = ({ todo }) => {
+  const { handleUpdate, handleDelete } = useContext(TodoDispatchContext);
+
   const handleChangeCheckbox = () => {
-    onUpdate(todo.id);
+    handleUpdate(todo.id);
   };
 
-  const handleDelete = () => {
-    onDelete(todo.id);
+  const handleDeleteTodo = () => {
+    handleDelete(todo.id);
   };
 
   return (
@@ -19,17 +22,19 @@ const ToDoItem = ({ todo, onUpdate, onDelete }) => {
       />
       <div className="content">{todo.content}</div>
       <div className="date">{new Date(todo.date).toLocaleDateString()}</div>
-      <button onClick={handleDelete}>삭제</button>
+      <button onClick={handleDeleteTodo}>삭제</button>
     </div>
   );
 };
 
 // 고차 컴포넌트
-export default memo(ToDoItem, (prevProps, nextProps) => {
-  if (prevProps.id !== nextProps.id) return false;
-  if (prevProps.isDone !== nextProps.isDone) return false;
-  if (prevProps.content !== nextProps.content) return false;
-  if (prevProps.date !== nextProps.date) return false;
+// export default memo(ToDoItem, (prevProps, nextProps) => {
+//   if (prevProps.id !== nextProps.id) return false;
+//   if (prevProps.isDone !== nextProps.isDone) return false;
+//   if (prevProps.content !== nextProps.content) return false;
+//   if (prevProps.date !== nextProps.date) return false;
 
-  return true;
-});
+//   return true;
+// });
+
+export default memo(ToDoItem);

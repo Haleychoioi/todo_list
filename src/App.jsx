@@ -1,4 +1,4 @@
-import { useRef, useReducer } from "react";
+import { useRef, useReducer, useCallback, createContext, useMemo } from "react";
 import "./App.css";
 import Editor from "./components/Editor";
 import Header from "./components/Header";
@@ -22,41 +22,59 @@ function reducer(state, action) {
   }
 }
 
+export const TodoStateContext = createContext();
+export const TodoDispatchContext = createContext();
+
 function App() {
   const [todos, dispatch] = useReducer(reducer, []);
   const idRef = useRef(0);
 
-  const handleCreate = (content) => {
-    dispatch({
-      type: "CREATE",
-      data: {
-        id: idRef.current++,
-        isDone: false,
-        content: content,
-        date: new Date().getTime(),
-      },
-    });
-  };
+  const handleCreate = useCallback(
+    () => (content) => {
+      dispatch({
+        type: "CREATE",
+        data: {
+          id: idRef.current++,
+          isDone: false,
+          content: content,
+          date: new Date().getTime(),
+        },
+      });
+    },
+    []
+  );
 
-  const handleUpdate = (targetId) => {
-    dispatch({
-      type: "UPDATE",
-      targetId: targetId,
-    });
-  };
+  const handleUpdate = useCallback(() => {
+    (targetId) => {
+      dispatch({
+        type: "UPDATE",
+        targetId: targetId,
+      });
+    };
+  }, []);
 
-  const handleDelete = (targetId) => {
-    dispatch({
-      type: "DELETE",
-      targetId: targetId,
-    });
-  };
+  const handleDelete = useCallback(() => {
+    (targetId) => {
+      dispatch({
+        type: "DELETE",
+        targetId: targetId,
+      });
+    };
+  }, []);
+
+  const memoizedDispatch = useMemo(() => {
+    return { handleCreate, handleDelete, handleUpdate };
+  }, [handleCreate, handleDelete, handleUpdate]);
 
   return (
     <div className="App">
       <Header />
-      <Editor onCreate={handleCreate} />
-      <List todos={todos} onUpdate={handleUpdate} onDelete={handleDelete} />
+      <TodoStateContext.Provider value={todos}>
+        <TodoDispatchContext.Provider value={memoizedDispatch}>
+          <Editor />
+          <List />
+        </TodoDispatchContext.Provider>
+      </TodoStateContext.Provider>
     </div>
   );
 }
