@@ -1,3 +1,4 @@
+import { memo } from "react";
 import "./ToDoItem.css";
 
 const ToDoItem = ({ todo, onUpdate, onDelete }) => {
@@ -23,4 +24,12 @@ const ToDoItem = ({ todo, onUpdate, onDelete }) => {
   );
 };
 
-export default ToDoItem;
+// 고차 컴포넌트
+export default memo(ToDoItem, (prevProps, nextProps) => {
+  if (prevProps.id !== nextProps.id) return false;
+  if (prevProps.isDone !== nextProps.isDone) return false;
+  if (prevProps.content !== nextProps.content) return false;
+  if (prevProps.date !== nextProps.date) return false;
+
+  return true;
+});
