@@ -1,0 +1,10 @@
+body {
+  width: 500px;
+  margin: 0 auto;
+}
+
+.App {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
